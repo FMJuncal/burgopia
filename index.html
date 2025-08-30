@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+
+<head>
+    <style>
+        /* Floating animation */
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(20px, -30px);
+            }
+
+            50% {
+                transform: translate(-20px, 30px);
+            }
+
+            75% {
+                transform: translate(30px, -20px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .floating-word {
+            position: absolute;
+            font-size: 20px;
+            font-weight: bold;
+            color: red;
+            cursor: pointer;
+        }
+
+        .enlarged {
+            font-size: 50px;
+            color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="font-size:30px; font-weight:bold; color:blue">
+        Video Test
+    </div>
+
+    <button onclick="playVideo()" style="font-size:20px; margin:10px 0;">Ayuda</button>
+    <button onclick="openLinkedinOrLol()" style="font-size:20px; margin:10px 0;">LINKEDIN O LOL?
+        
+    </button>
+
+    <div id="videoContainer" style="display:none">
+        <div id="player"></div>
+    </div>
+
+    <!-- Floating word -->
+    <div id="floatingWord" class="floating-word" onclick="enlargeWord(this)">burgopoia</div>
+
+    <script>
+        let player;
+        let intervalId;
+
+        // Load the YouTube IFrame Player API
+        function loadYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        // This function creates the YouTube player
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '270',
+                width: '480',
+                videoId: 'X2QMN0a_TrA',
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        // Handle video state changes
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                // Start checking the playback time
+                intervalId = setInterval(checkPlaybackTime, 100);
+            } else {
+                // Stop checking the playback time when the video is paused or ends
+                clearInterval(intervalId);
+            }
+        }
+
+        // Check the playback time and turn everything black at 0.4 seconds
+        function checkPlaybackTime() {
+            if (player.getCurrentTime() >= 4.45) {
+                // Remove all content and turn the page black
+                document.body.innerHTML = ''; // Clear all content
+                document.body.style.backgroundColor = 'black'; // Set background to black
+                clearInterval(intervalId); // Stop checking after turning black
+            }
+        }
+
+        function playVideo() {
+            document.getElementById('videoContainer').style.display = 'block';
+            player.playVideo();
+        }
+
+        function enlargeWord(element) {
+            element.classList.add('enlarged');
+        }
+
+        // Function to move the word randomly
+        function moveFloatingWord() {
+            const floatingWord = document.getElementById('floatingWord');
+            const x = Math.random() * (window.innerWidth - 100); // Random x position
+            const y = Math.random() * (window.innerHeight - 50); // Random y position
+            floatingWord.style.left = `${x}px`;
+            floatingWord.style.top = `${y}px`;
+        }
+
+        // Move the word every 1 second
+        setInterval(moveFloatingWord, 1000);
+
+        // Load the YouTube API
+        loadYouTubeAPI();
+    </script>
+</body>
+
+</html>
